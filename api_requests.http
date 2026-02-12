@@ -1,0 +1,47 @@
+### Variables
+@baseUrl = http://localhost:3001
+
+### 1. Create a new User
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "firstName": "Mario",
+  "lastName": "Rossi",
+  "email": "mario.rossi@example.com",
+  "password": "securePassword123",
+  "phone": "+391234567890",
+  "roleId": 1
+}
+
+### 1. Login (Super Admin)
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "superadmin@fiumicello.com",
+  "password": "SuperSecretPassword123!"
+}
+
+### 2. Create User (Should be Guest)
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "firstName": "New",
+  "lastName": "User",
+  "email": "new.user@example.com",
+  "password": "password123",
+  "phone": "+1234567890",
+  "roleId": 1 
+}
+
+### 3. Get All Users
+GET {{baseUrl}}/users
+
+### 4. Delete User (Soft Delete)
+@userId = replace_with_uuid_from_response
+DELETE {{baseUrl}}/users/{{userId}}
+
+### 5. Verify Soft Delete (Get User again - check isActive)
+GET {{baseUrl}}/users/{{userId}}
