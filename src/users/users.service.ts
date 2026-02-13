@@ -16,7 +16,8 @@ export class UsersService {
   ) { }
 
   async create(createUserDto: CreateUserDto) {
-    const existingUser = await this.userRepository.findOne({ where: { email: createUserDto.email } });
+    const { password, roleId, restaurantId, ...userData } = createUserDto;
+    const existingUser = await this.userRepository.findOne({ where: { email: userData.email } });
     if (existingUser) {
       throw new ConflictException('Email already exists');
     }
@@ -28,10 +29,11 @@ export class UsersService {
     if (!role) throw new NotFoundException('Default role Guest not found');
 
     const user = this.userRepository.create({
-      ...createUserDto,
+      ...userData,
       password: hashedPassword,
       role: role,
       isActive: true, // explicit default
+      restaurant: restaurantId ? { id: restaurantId } as any : null,
     });
 
     const savedUser = await this.userRepository.save(user);
@@ -95,6 +97,13 @@ export class UsersService {
       if (!role) throw new NotFoundException('Role not found');
       user.role = role;
       delete updateUserDto.roleId;
+      // Don't delete, just ignore in Object.assign? Or delete to be safe.
+    }
+
+    if (updateUserDto.restaurantId) {
+      // Assign restaurant relation
+      user.restaurant = { id: updateUserDto.restaurantId } as any;
+      delete updateUserDto.restaurantId;
     }
 
     Object.assign(user, updateUserDto);
@@ -104,20 +113,5 @@ export class UsersService {
     return updatedUser;
   }
 
-  async remove(id: string) {
-    const user = await this.findOne(id);
-    if (!user) throw new NotFoundException('User not found');
 
-    // Soft delete
-    user.isActive = false;
-    return this.userRepository.save(user);
-  }
-
-  async activate(id: string) {
-    const user = await this.findOne(id);
-    if (!user) throw new NotFoundException('User not found');
-
-    user.isActive = true;
-    return this.userRepository.save(user);
-  }
 }

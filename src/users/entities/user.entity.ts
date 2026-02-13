@@ -5,8 +5,12 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     ManyToOne,
+    OneToMany,
 } from 'typeorm';
 import { Role } from '../../roles/entities/role.entity';
+import { Sale } from '../../sales/entities/sale.entity';
+import { Restaurant } from '../../restaurants/entities/restaurant.entity';
+import { Table } from '../../tables/entities/table.entity';
 
 @Entity()
 export class User {
@@ -51,4 +55,13 @@ export class User {
 
     @ManyToOne(() => Role, (role) => role.users, { eager: true })
     role: Role;
+
+    @OneToMany(() => Sale, (sale) => sale.user)
+    sales: Sale[];
+
+    @ManyToOne(() => Restaurant, (restaurant) => restaurant.users, { eager: true, nullable: true })
+    restaurant: Restaurant;
+
+    @OneToMany(() => Table, (table) => table.user) // Tables assigned to this user
+    tables: Table[];
 }

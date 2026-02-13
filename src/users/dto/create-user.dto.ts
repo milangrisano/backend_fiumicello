@@ -24,4 +24,15 @@ export class CreateUserDto {
     @IsNumber()
     @IsOptional()
     roleId?: number;
+
+    @IsOptional()
+    isActive?: boolean;
+
+    @IsString()
+    @IsOptional()
+    restaurantId?: string;
+
+    // @IsArray()
+    // @IsOptional()
+    // tableIds?: number[]; // Optional for now, can be done via separate endpoint or update
 }
