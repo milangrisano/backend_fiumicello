@@ -31,6 +31,30 @@
 $ npm install
 ```
 
+## Local Setup
+
+1.  **Configure Environment Variables**:
+    Copy the template file to creating your local configuration:
+    ```bash
+    cp .env.template .env
+    ```
+
+2.  **Start Database**:
+    Run the following command to start the PostgreSQL container in the background:
+    ```bash
+    docker-compose up -d
+    ```
+
+3.  **Install Dependencies**:
+    ```bash
+    npm install
+    ```
+
+4.  **Run Application**:
+    ```bash
+    npm run start:dev
+    ```
+
 ## Compile and run the project
 
 ```bash
