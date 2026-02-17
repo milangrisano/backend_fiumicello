@@ -33,5 +33,11 @@ export class ProductsController {
         return this.productsService.update(id, updateProductDto);
     }
 
+    @Patch(':id/deactivate')
+    @UseGuards(JwtAuthGuard)
+    deactivate(@Param('id', ParseUUIDPipe) id: string) {
+        return this.productsService.deactivate(id);
+    }
+
 
 }

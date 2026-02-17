@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
+import { Injectable, OnModuleInit, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -40,26 +40,29 @@ export class RolesService implements OnModuleInit {
   }
 
   findAll() {
-    return this.roleRepository.find();
+    return this.roleRepository.find({ where: { isActive: true } });
   }
 
   findOne(id: number) {
-    return this.roleRepository.findOne({ where: { id } });
+    return this.roleRepository.findOne({ where: { id, isActive: true } });
   }
 
   async findByName(name: string) {
-    return this.roleRepository.findOne({ where: { name } });
+    return this.roleRepository.findOne({ where: { name, isActive: true } });
   }
 
   async update(id: number, updateRoleDto: UpdateRoleDto) {
-    await this.roleRepository.update(id, updateRoleDto);
-    return this.findOne(id);
+    const role = await this.findOne(id);
+    if (!role) throw new NotFoundException('Role not found');
+    Object.assign(role, updateRoleDto);
+    return this.roleRepository.save(role);
   }
 
-  async remove(id: number) {
+  async deactivate(id: number) {
     const role = await this.findOne(id);
     if (role) {
-      return this.roleRepository.remove(role);
+      role.isActive = false;
+      return this.roleRepository.save(role);
     }
   }
 }

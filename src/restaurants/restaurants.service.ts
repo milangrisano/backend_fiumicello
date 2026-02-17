@@ -45,7 +45,7 @@ export class RestaurantsService {
         return this.restaurantRepository.save(restaurant);
     }
 
-    async remove(id: string) {
+    async deactivate(id: string) {
         const restaurant = await this.findOne(id);
         restaurant.isActive = false;
         return this.restaurantRepository.save(restaurant);

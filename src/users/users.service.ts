@@ -67,11 +67,25 @@ export class UsersService {
   }
 
   findAll() {
-    return this.userRepository.find({ relations: ['role'] });
+    return this.userRepository.find({
+      where: { isActive: true },
+      relations: ['role']
+    });
   }
 
-  findOne(id: string) {
-    return this.userRepository.findOne({ where: { id }, relations: ['role'] });
+  async findOne(id: string) {
+    const user = await this.userRepository.findOne({ where: { id }, relations: ['role'] });
+    if (!user) throw new NotFoundException('User not found');
+    if (!user.isActive) throw new NotFoundException('User is inactive');
+    return user;
+  }
+
+  async deactivate(id: string) {
+    const user = await this.findOne(id);
+    user.isActive = false;
+    const updatedUser = await this.userRepository.save(user);
+    delete (updatedUser as any).password;
+    return updatedUser;
   }
 
   async findByEmail(email: string) {

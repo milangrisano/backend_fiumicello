@@ -12,6 +12,9 @@ export class Role {
     @Column({ nullable: true })
     description: string;
 
+    @Column({ default: true })
+    isActive: boolean;
+
     @OneToMany(() => User, (user) => user.role)
     users: User[];
 }

@@ -67,7 +67,7 @@ export class TablesService {
         return this.tableRepository.save(table);
     }
 
-    async remove(id: number) {
+    async deactivate(id: number) {
         const table = await this.findOne(id);
         table.isActive = false;
         return this.tableRepository.save(table);

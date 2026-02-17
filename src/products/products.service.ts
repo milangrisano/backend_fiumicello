@@ -39,9 +39,9 @@ export class ProductsService {
     }
 
     async findAll() {
-        // Only return active products (soft delete handled automatically by TypeORM if explicitly enabled, but here softDelete is manual?)
-        // Actually @DeleteDateColumn handles it automatically for find methods.
+        // Only return active products
         const products = await this.productRepository.find({
+            where: { isActive: true },
             relations: {
                 images: true,
             },
@@ -62,17 +62,25 @@ export class ProductsService {
             // Search by slug or type/name
             const queryBuilder = this.productRepository.createQueryBuilder('prod');
             product = await queryBuilder
-                .where('prod.type =:type or prod.slug =:slug', {
+                .where('(prod.type =:type or prod.slug =:slug) AND prod.isActive = :isActive', {
                     type: term,
                     slug: term,
+                    isActive: true,
                 })
                 .leftJoinAndSelect('prod.images', 'prodImages')
                 .getOne();
         }
 
-        if (!product)
+        if (!product || !product.isActive)
             throw new NotFoundException(`Product with id, name or slug "${term}" not found`);
 
+        return product;
+    }
+
+    async deactivate(id: string) {
+        const product = await this.findOne(id);
+        product.isActive = false;
+        await this.productRepository.save(product);
         return product;
     }
 

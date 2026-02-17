@@ -1,4 +1,5 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { TablesService } from './tables.service';
 import { CreateTableDto } from './dto/create-table.dto';
 import { UpdateTableDto } from './dto/update-table.dto';
@@ -35,10 +36,13 @@ export class TablesController {
         return this.tablesService.update(id, updateTableDto);
     }
 
-    @Delete(':id')
+    @Patch(':id/deactivate')
+    @ApiOperation({ summary: 'Deactivate table', description: 'Deactivates a table by ID.' })
+    @ApiResponse({ status: 200, description: 'The table has been successfully deactivated.' })
+    @ApiResponse({ status: 404, description: 'Table not found.' })
     @UseGuards(RolesGuard)
     @Roles('Super Admin', 'Admin')
-    remove(@Param('id', ParseIntPipe) id: number) {
-        return this.tablesService.remove(id);
+    deactivate(@Param('id') id: string) {
+        return this.tablesService.deactivate(+id);
     }
 }

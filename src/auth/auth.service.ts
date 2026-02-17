@@ -2,13 +2,16 @@ import { Injectable, UnauthorizedException, Inject, forwardRef } from '@nestjs/c
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { RolesService } from '../roles/roles.service';
+import { RegisterUserDto } from './dto/register-user.dto';
 
 @Injectable()
 export class AuthService {
     constructor(
         @Inject(forwardRef(() => UsersService))
         private usersService: UsersService,
-        private jwtService: JwtService
+        private jwtService: JwtService,
+        private rolesService: RolesService,
     ) { }
 
     async validateUser(email: string, pass: string): Promise<any> {
@@ -33,5 +36,17 @@ export class AuthService {
                 isActive: user.isActive,
             }
         };
+    }
+
+    async register(registerUserDto: RegisterUserDto) {
+        const guestRole = await this.rolesService.findByName('Guest');
+        if (!guestRole) {
+            throw new UnauthorizedException('Default role not found');
+        }
+
+        return this.usersService.create({
+            ...registerUserDto,
+            roleId: guestRole.id,
+        });
     }
 }
