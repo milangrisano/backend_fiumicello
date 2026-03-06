@@ -6,6 +6,7 @@ import { SaleDetail } from './entities/sale-detail.entity';
 import { CreateSaleDto } from './dto/create-sale.dto';
 import { AddItemsDto } from './dto/add-items.dto';
 import { CloseSaleDto } from './dto/close-sale.dto';
+import { UpdateSaleStatusDto } from './dto/update-sale-status.dto';
 import { Table } from '../tables/entities/table.entity';
 import { Restaurant } from '../restaurants/entities/restaurant.entity';
 import { User } from '../users/entities/user.entity';
@@ -108,7 +109,7 @@ export class SalesService {
         });
 
         if (!sale) throw new NotFoundException('Sale not found');
-        if (sale.status !== SaleStatus.OPEN) throw new BadRequestException('Sale is not OPEN'); // Use enum for status
+        if (sale.status === SaleStatus.CLOSED || sale.status === SaleStatus.CANCELLED) throw new BadRequestException('Sale is closed or cancelled');
 
         // Ensure user belongs to the same restaurant as the sale?
         // Or if the sale belongs to user's restaurant?
@@ -172,7 +173,7 @@ export class SalesService {
         // But let's be consistent
         const user = await this.userRepository.findOne({
             where: { id: reqUser.userId },
-            relations: ['restaurant']
+            relations: ['restaurant', 'role']
         });
 
         if (!user) throw new NotFoundException('User not found');
@@ -183,7 +184,7 @@ export class SalesService {
         });
 
         if (!sale) throw new NotFoundException('Sale not found');
-        if (sale.status !== SaleStatus.OPEN) throw new BadRequestException('Sale is not OPEN'); // Use enum for status
+        if (sale.status === SaleStatus.CLOSED || sale.status === SaleStatus.CANCELLED) throw new BadRequestException('Sale is already closed or cancelled');
 
         // Verify ownership/permission
         if (sale.restaurant.id !== user.restaurant?.id) {
@@ -193,22 +194,82 @@ export class SalesService {
         const paymentMethod = await this.paymentMethodRepository.findOneBy({ id: closeSaleDto.paymentMethodId, isActive: true });
         if (!paymentMethod) throw new NotFoundException('Payment Method not found');
 
+        // Business Rule: Waiters cannot receive Cash
+        const isCash = paymentMethod.name.toLowerCase().includes('efectivo') || paymentMethod.name.toLowerCase().includes('cash');
+        if (user.role?.name === 'Waiter' && isCash) {
+            throw new BadRequestException('Waiters are not allowed to process cash payments');
+        }
+
         sale.paymentMethod = paymentMethod;
         sale.dinerName = closeSaleDto.dinerName || '';
         sale.dinerEmail = closeSaleDto.dinerEmail || '';
         sale.dinerPhone = closeSaleDto.dinerPhone || '';
+        sale.invoiceType = closeSaleDto.invoiceType;
         sale.status = SaleStatus.CLOSED; // Mark as COMPLETED/CLOSED
 
         return this.saleRepository.save(sale);
     }
 
-    findAll() {
-        return this.saleRepository.find({
-            order: { createdAt: 'DESC' }
+    async updateStatus(id: string, updateSaleStatusDto: UpdateSaleStatusDto, reqUser: any) {
+        const user = await this.userRepository.findOne({
+            where: { id: reqUser.userId },
+            relations: ['restaurant', 'role']
         });
+
+        if (!user) throw new NotFoundException('User not found');
+
+        const sale = await this.saleRepository.findOne({
+            where: { id },
+            relations: ['restaurant']
+        });
+
+        if (!sale) throw new NotFoundException('Sale not found');
+
+        // Business Rule: Chef can only update status forward
+        if (user.role?.name === 'Chef') {
+            const allowedTransitions = [SaleStatus.COMMANDED, SaleStatus.IN_PROGRESS, SaleStatus.READY];
+            if (!allowedTransitions.includes(updateSaleStatusDto.status)) {
+                throw new BadRequestException('Chefs can only transition to COMMANDED, IN_PROGRESS, or READY');
+            }
+        }
+
+        sale.status = updateSaleStatusDto.status;
+        return this.saleRepository.save(sale);
     }
 
-    findOne(id: string) {
-        return this.saleRepository.findOne({ where: { id } });
+    private stripPricesForChef(sale: Sale): Sale {
+        sale.total = 0;
+        if (sale.details) {
+            sale.details.forEach(detail => {
+                detail.price = 0;
+                detail.subtotal = 0;
+            });
+        }
+        return sale;
+    }
+
+    async findAll(reqUser: any) {
+        const sales = await this.saleRepository.find({
+            order: { createdAt: 'DESC' }
+        });
+
+        // Strip prices if role is Chef
+        if (reqUser?.role === 'Chef') {
+            return sales.map(sale => this.stripPricesForChef(sale));
+        }
+
+        return sales;
+    }
+
+    async findOne(id: string, reqUser?: any) {
+        const sale = await this.saleRepository.findOne({ where: { id } });
+
+        if (!sale) throw new NotFoundException('Sale not found');
+
+        if (reqUser?.role === 'Chef') {
+            return this.stripPricesForChef(sale);
+        }
+
+        return sale;
     }
 }
