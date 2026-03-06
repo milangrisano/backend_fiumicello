@@ -114,5 +114,20 @@ export class ProductsService {
         return this.findOne(id);
     }
 
+    async deleteAllProducts() {
+        const query = this.productRepository.createQueryBuilder('product');
 
+        try {
+            return await query
+                .delete()
+                .where({})
+                .execute();
+        } catch (error) {
+            this.handleDBExceptions(error);
+        }
+    }
+
+    private handleDBExceptions(error: any) {
+        throw new Error(`Unexpected error, check server logs: ${error.message}`);
+    }
 }

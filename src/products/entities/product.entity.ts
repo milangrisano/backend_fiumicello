@@ -11,7 +11,11 @@ export class Product {
 
     @ApiProperty({ description: 'Target identifier/name of the product', example: 'Pizza Margarita' })
     @Column('text')
-    type: string; // "Tipo" from requirements (Name of the product)
+    name: string; // The Name of the product
+
+    @ApiProperty({ description: 'Type or variant of the product (e.g., Grande, Mediana, Personal)', example: 'Grande' })
+    @Column('text')
+    type: string; // The Size or specific variant
 
     @ApiProperty({ description: 'Category of the product', example: 'Pizzas' })
     @Column('text')

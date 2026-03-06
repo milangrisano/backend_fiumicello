@@ -12,30 +12,38 @@ import { TablesModule } from './tables/tables.module';
 import { SalesModule } from './sales/sales.module';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { TerminalsModule } from './terminals/terminals.module';
+import { SeedModule } from './seed/seed.module';
+
+const importsArr: any[] = [
+  ConfigModule.forRoot(),
+
+  TypeOrmModule.forRoot({
+    type: 'postgres',
+    host: process.env.DB_HOST || 'localhost',
+    port: +(process.env.DB_PORT || 5432),
+    database: process.env.DB_NAME || 'FiumicelloDB',
+    username: process.env.DB_USERNAME || 'postgres',
+    password: process.env.DB_PASSWORD || 'MySecr3tPassWord',
+    autoLoadEntities: true,
+    synchronize: true, // development only
+  }),
+  AuthModule,
+  UsersModule,
+  ProductsModule,
+  RestaurantsModule,
+  TablesModule,
+  SalesModule,
+  PaymentMethodsModule,
+  TerminalsModule,
+];
+
+// Load SeedModule only in non-production environments
+if (process.env.NODE_ENV !== 'production') {
+  importsArr.push(SeedModule);
+}
 
 @Module({
-  imports: [
-    ConfigModule.forRoot(),
-
-    TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.DB_HOST || 'localhost',
-      port: +(process.env.DB_PORT || 5432),
-      database: process.env.DB_NAME || 'FiumicelloDB',
-      username: process.env.DB_USERNAME || 'postgres',
-      password: process.env.DB_PASSWORD || 'MySecr3tPassWord',
-      autoLoadEntities: true,
-      synchronize: true, // development only
-    }),
-    AuthModule,
-    UsersModule,
-    ProductsModule,
-    RestaurantsModule,
-    TablesModule,
-    SalesModule,
-    PaymentMethodsModule,
-    TerminalsModule,
-  ],
+  imports: importsArr,
   controllers: [AppController],
   providers: [AppService],
 })

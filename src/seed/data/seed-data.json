@@ -1,0 +1,270 @@
+{
+    "pizzas": [
+        {
+            "name": "Margherita",
+            "category": "Pizzas",
+            "description": "Salsa pomodoro, queso mozzarella y pesto de albahaca de la casa.",
+            "prices": {
+                "Personal": 20900,
+                "Mediana": 44900,
+                "Grande": 63900
+            }
+        },
+        {
+            "name": "Pollo y Champiñon",
+            "category": "Pizzas",
+            "description": "Salsa pomodoro, queso mozzarella, pollo desmechado, y champiñones salteados.",
+            "prices": {
+                "Personal": 22900,
+                "Mediana": 44900,
+                "Grande": 63900
+            }
+        },
+        {
+            "name": "Pepperoni",
+            "category": "Pizzas",
+            "description": "Salsa pomodoro, queso mozzarella y pepperoni tipo americano.",
+            "prices": {
+                "Personal": 24900,
+                "Mediana": 48900,
+                "Grande": 68900
+            }
+        },
+        {
+            "name": "Hawaiana",
+            "category": "Pizzas",
+            "description": "Salsa pomodoro, queso mozzarella, jamón ahumado, piña caramelizada",
+            "prices": {
+                "Personal": 24900,
+                "Mediana": 50900,
+                "Grande": 72900
+            }
+        },
+        {
+            "name": "Maíz Guanciale",
+            "category": "Pizzas",
+            "description": "Salsa pomodoro, maíz dulce y Guanciale",
+            "prices": {
+                "Personal": 23900,
+                "Mediana": 46900,
+                "Grande": 71900
+            }
+        },
+        {
+            "name": "Vegetariana",
+            "category": "Pizzas",
+            "description": "Salsa Pomodoro, queso mozzarella, pimentón asado, cebolla, aceitunas negras y champiñones salteados, corazones de alcachofas.",
+            "prices": {
+                "Personal": 28900,
+                "Mediana": 53900,
+                "Grande": 79900
+            }
+        },
+        {
+            "name": "Napolitana",
+            "category": "Pizzas",
+            "description": "Salsa Pomodoro, queso mozzarella y anchoas.",
+            "prices": {
+                "Personal": 27900,
+                "Mediana": 52900,
+                "Grande": 77900
+            }
+        },
+        {
+            "name": "Quatro Formaggi",
+            "category": "Pizzas",
+            "description": "Salsa Pomodoro, queso provolone, gorgonzola dolce, Parmegiano Reggiano y Mozarella.",
+            "prices": {
+                "Personal": 34900,
+                "Mediana": 64900,
+                "Grande": 96900
+            }
+        },
+        {
+            "name": "Coppa",
+            "category": "Pizzas",
+            "description": "Salsa Pomodoro, queso mozzarella, Fior di latte y capicola",
+            "prices": {
+                "Personal": 34900,
+                "Mediana": 64900,
+                "Grande": 96900
+            }
+        },
+        {
+            "name": "Prosciutto Crudo e Rucula",
+            "category": "Pizzas",
+            "description": "Salsa pomodoro, queso mozzarella, Prosciutto Crudo y Rúcula fresca.",
+            "prices": {
+                "Personal": 34900,
+                "Mediana": 64900,
+                "Grande": 96900
+            }
+        },
+        {
+            "name": "Quattro Maiale",
+            "category": "Pizzas",
+            "description": "Salsa Pomodoro, queso mozzarella, salametto, tocineta ahumada, jamón cocido curado, y pepperoni tipo americano.",
+            "prices": {
+                "Personal": 29900,
+                "Mediana": 57900,
+                "Grande": 85900
+            }
+        },
+        {
+            "name": "Salametto",
+            "category": "Pizzas",
+            "description": "Salsa Pomodoro, queso mozzarella, salami madurado italiano.",
+            "prices": {
+                "Personal": 31900,
+                "Mediana": 62900,
+                "Grande": 92900
+            }
+        },
+        {
+            "name": "Prosciutto e Funghi",
+            "category": "Pizzas",
+            "description": "Salsa Pomodoro, queso mozzarella, Jamón cocido y curado, champiñones salteados.",
+            "prices": {
+                "Personal": 27900,
+                "Mediana": 51900,
+                "Grande": 76900
+            }
+        },
+        {
+            "name": "Salami y Vegetales",
+            "category": "Pizzas",
+            "description": "Salsa Pomodoro, queso mozzarella, salametto, pimentón asado, cebolla, aceitunas negras, anchoas.",
+            "prices": {
+                "Personal": 29900,
+                "Mediana": 56900,
+                "Grande": 83900
+            }
+        }
+    ],
+    "lasagnas": [
+        {
+            "name": "Lasagna di Carne",
+            "category": "Lasagnas",
+            "type": "Di Carne",
+            "description": "Pasta italiana, con nuestro especial ragú de carne napolitano, salsa bechamel florentina, queso mozzarella y pecorino romano.",
+            "price": 26900
+        },
+        {
+            "name": "Lasagna Miste",
+            "category": "Lasagnas",
+            "type": "Miste",
+            "description": "Pasta italiana, con nuestro especial ragú de carne y pollo, salsa bechamel florentina, queso mozzarella y pecorino romano.",
+            "price": 28900
+        }
+    ],
+    "paninis": [
+        {
+            "name": "Schiacciata Di Parma",
+            "category": "Paninis",
+            "type": "Estándar",
+            "description": "Schiacciata de ajo y oregano, pesto di basilico, prosciutto crudo di parma, fiordilatte, tomate fresco, rucula fresca, aceite de oliva y acetto balsamico de modena",
+            "price": 36900
+        },
+        {
+            "name": "Schiacciata Di Bologna",
+            "category": "Paninis",
+            "type": "Estándar",
+            "description": "Schiacciata de ajo y oregano, pesto di basilico, mortadela de pistachio, fiordilatte, tomate y rucula fresca, aceite de oliva y acetto balsamico de modena",
+            "price": 26900
+        },
+        {
+            "name": "Schiacciata Di Córcega",
+            "category": "Paninis",
+            "type": "Estándar",
+            "description": "Schiacciata de ajo y oregano, pesto di basilico, tomates y rucula fresca, Coppa o Capicola, fiordilatte, tomate fresca, aceite de oliva y acetto balsamico de modena",
+            "price": 32900
+        },
+        {
+            "name": "Schiacciata Cotto",
+            "category": "Paninis",
+            "type": "Estándar",
+            "description": "Schiacciata de ajo y oregano, pesto de albahaca y tomates secos, prosciutto cotto modena, fiordilatte, tomate y rucula fresca, aceite de oliva y acetto balsamico de modena",
+            "price": 28900
+        }
+    ],
+    "bebidas": [
+        {
+            "name": "3 Cordilleras",
+            "category": "Bebidas",
+            "type": "Cerveza",
+            "price": 10000
+        },
+        {
+            "name": "Heineken",
+            "category": "Bebidas",
+            "type": "Cerveza",
+            "price": 12000
+        },
+        {
+            "name": "Miller Lite",
+            "category": "Bebidas",
+            "type": "Cerveza",
+            "price": 10000
+        },
+        {
+            "name": "Hatsu Blanco",
+            "category": "Bebidas",
+            "type": "Te",
+            "price": 8000
+        },
+        {
+            "name": "Hatsu Lila",
+            "category": "Bebidas",
+            "type": "Te",
+            "price": 8000
+        },
+        {
+            "name": "Hatsu Negro",
+            "category": "Bebidas",
+            "type": "Te",
+            "price": 8000
+        },
+        {
+            "name": "Coca-Cola Original",
+            "category": "Bebidas",
+            "type": "Gaseosa",
+            "price": 5000
+        },
+        {
+            "name": "Coca-Cola Zero",
+            "category": "Bebidas",
+            "type": "Gaseosa",
+            "price": 5000
+        },
+        {
+            "name": "Ginger",
+            "category": "Bebidas",
+            "type": "Gaseosa",
+            "price": 4500
+        },
+        {
+            "name": "Quatro",
+            "category": "Bebidas",
+            "type": "Gaseosa",
+            "price": 4500
+        },
+        {
+            "name": "Sprite",
+            "category": "Bebidas",
+            "type": "Gaseosa",
+            "price": 4500
+        },
+        {
+            "name": "Agua Sin gas",
+            "category": "Bebidas",
+            "type": "Agua",
+            "price": 3500
+        },
+        {
+            "name": "Agua Con gas",
+            "category": "Bebidas",
+            "type": "Agua",
+            "price": 4000
+        }
+    ]
+}
