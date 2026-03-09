@@ -127,5 +127,38 @@ export class UsersService {
     return updatedUser;
   }
 
+  async updateVerificationCode(email: string, code: string, expiresAt: Date) {
+    const user = await this.findByEmail(email);
+    if (!user) throw new NotFoundException('User not found');
+
+    user.emailVerificationCode = code;
+    user.emailVerificationCodeExpiresAt = expiresAt;
+
+    await this.userRepository.save(user);
+  }
+
+  async verifyEmail(email: string, code: string): Promise<boolean> {
+    const user = await this.findByEmail(email);
+    if (!user) throw new NotFoundException('User not found');
+
+    if (user.isEmailVerified) {
+      throw new ConflictException('Email is already verified');
+    }
+
+    if (!user.emailVerificationCode || user.emailVerificationCode !== code) {
+      return false;
+    }
+
+    if (!user.emailVerificationCodeExpiresAt || user.emailVerificationCodeExpiresAt < new Date()) {
+      return false;
+    }
+
+    user.isEmailVerified = true;
+    user.emailVerificationCode = null;
+    user.emailVerificationCodeExpiresAt = null;
+
+    await this.userRepository.save(user);
+    return true;
+  }
 
 }

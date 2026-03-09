@@ -55,6 +55,10 @@ export class User {
     @Column({ nullable: true })
     emailVerificationCode: string;
 
+    @ApiProperty({ description: 'Date of expiration for email verification code', required: false })
+    @Column({ type: 'timestamp', nullable: true })
+    emailVerificationCodeExpiresAt: Date;
+
     @ApiProperty({ description: 'Verification code for phone', required: false })
     @Column({ nullable: true })
     phoneVerificationCode: string;

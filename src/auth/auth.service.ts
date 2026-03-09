@@ -49,4 +49,34 @@ export class AuthService {
             roleId: guestRole.id,
         });
     }
+
+    async generateVerificationCode(email: string) {
+        const user = await this.usersService.findByEmail(email);
+        if (!user) {
+            // Se debe retornar un éxito silencioso para no exponer qué correos existen en la base de datos
+            return { message: 'If the email exists, a verification code has been sent.' };
+        }
+
+        // Generar código de 6 dígitos puro numérico
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        // Expiración en 3 minutos
+        const expiresAt = new Date(Date.now() + 3 * 60 * 1000);
+
+        await this.usersService.updateVerificationCode(email, code, expiresAt);
+
+        // TODO: En un escenario real aquí integraríamos Nodemailer, SendGrid, etc.
+        // Simulamos envío al logger para propósitos de prueba de este módulo
+        console.log(`[Email Simulation] Enviando código ${code} a ${email}`);
+
+        return { message: 'If the email exists, a verification code has been sent.' };
+    }
+
+    async verifyEmailCode(email: string, code: string) {
+        const isValid = await this.usersService.verifyEmail(email, code);
+        if (!isValid) {
+            throw new UnauthorizedException('Invalid or expired verification code');
+        }
+
+        return { message: 'Email successfully verified' };
+    }
 }

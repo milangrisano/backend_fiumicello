@@ -30,4 +30,21 @@ export class AuthController {
     register(@Body() registerUserDto: RegisterUserDto) {
         return this.authService.register(registerUserDto);
     }
+
+    @Post('send-verification-code')
+    @ApiOperation({ summary: 'Send an email verification code', description: 'Generates a 6-digit code which expires in 3 minutes and simulates sending it.' })
+    @ApiCreatedResponse({ description: 'Returns a success response without exposing if email exists.' })
+    @ApiBadRequestResponse({ description: 'Bad Request.' })
+    sendVerificationCode(@Body() body: import('./dto/send-verification-code.dto').SendVerificationCodeDto) {
+        return this.authService.generateVerificationCode(body.email);
+    }
+
+    @Post('verify-code')
+    @ApiOperation({ summary: 'Verify email code', description: 'Validates the 6-digit verification code.' })
+    @ApiCreatedResponse({ description: 'Successfully verified email.' })
+    @ApiUnauthorizedResponse({ description: 'Invalid or expired code.' })
+    @ApiBadRequestResponse({ description: 'Bad Request.' })
+    verifyCode(@Body() body: import('./dto/verify-code.dto').VerifyCodeDto) {
+        return this.authService.verifyEmailCode(body.email, body.code);
+    }
 }
