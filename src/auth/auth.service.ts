@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RolesService } from '../roles/roles.service';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class AuthService {
@@ -12,6 +13,7 @@ export class AuthService {
         private usersService: UsersService,
         private jwtService: JwtService,
         private rolesService: RolesService,
+        private mailService: MailService,
     ) { }
 
     async validateUser(email: string, pass: string): Promise<any> {
@@ -64,9 +66,7 @@ export class AuthService {
 
         await this.usersService.updateVerificationCode(email, code, expiresAt);
 
-        // TODO: En un escenario real aquí integraríamos Nodemailer, SendGrid, etc.
-        // Simulamos envío al logger para propósitos de prueba de este módulo
-        console.log(`[Email Simulation] Enviando código ${code} a ${email}`);
+        await this.mailService.sendVerificationCode(email, code);
 
         return { message: 'If the email exists, a verification code has been sent.' };
     }

@@ -52,16 +52,16 @@ export class User {
     isPhoneVerified: boolean;
 
     @ApiProperty({ description: 'Verification code for email', required: false })
-    @Column({ nullable: true })
-    emailVerificationCode: string;
+    @Column({ type: 'varchar', nullable: true })
+    emailVerificationCode: string | null;
 
     @ApiProperty({ description: 'Date of expiration for email verification code', required: false })
     @Column({ type: 'timestamp', nullable: true })
-    emailVerificationCodeExpiresAt: Date;
+    emailVerificationCodeExpiresAt: Date | null;
 
     @ApiProperty({ description: 'Verification code for phone', required: false })
-    @Column({ nullable: true })
-    phoneVerificationCode: string;
+    @Column({ type: 'varchar', nullable: true })
+    phoneVerificationCode: string | null;
 
     @ApiProperty({ description: 'Date of creation' })
     @CreateDateColumn()

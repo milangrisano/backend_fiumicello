@@ -1,19 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { ProductsService } from '../products/products.service';
+import { UsersService } from '../users/users.service';
 import * as fs from 'fs';
 import * as path from 'path';
 
 @Injectable()
 export class SeedService {
-    constructor(private readonly productsService: ProductsService) { }
+    constructor(
+        private readonly productsService: ProductsService,
+        private readonly usersService: UsersService,
+    ) { }
 
     async runSeed() {
         await this.deleteTables();
         await this.insertNewProducts();
+        await this.insertUsers();
         return 'Seed executed successfully';
     }
 
     private async deleteTables() {
+        await this.usersService.deleteAllUsers();
         await this.productsService.deleteAllProducts();
     }
 
@@ -26,6 +32,33 @@ export class SeedService {
         }
 
         await Promise.all(insertPromises);
+    }
+
+    private async insertUsers() {
+        const dataPath = path.join(__dirname, 'data', 'seed-data.json');
+        const rawData = fs.readFileSync(dataPath, 'utf8');
+        const { users: usersToSeed } = JSON.parse(rawData);
+
+        if (!usersToSeed) return;
+
+        for (const user of usersToSeed) {
+            try {
+                // Get the role by name directly
+                const role = await this.usersService['rolesService'].findByName(user.roleName);
+                let roleId: number | undefined;
+                if (role) {
+                    roleId = role.id;
+                }
+
+                // create() expects CreateUserDto
+                const { roleName, ...userData } = user;
+
+                await this.usersService.create({ ...userData, roleId } as any);
+                console.log(`Seeded user: ${user.email}`);
+            } catch (error) {
+                console.error(`Error seeding user ${user.email}:`, error);
+            }
+        }
     }
 
     private getSeedData(): any[] {

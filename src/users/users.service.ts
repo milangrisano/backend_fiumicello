@@ -24,9 +24,15 @@ export class UsersService {
 
     const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
 
-    // Force Guest role
-    const role = await this.rolesService.findByName('Guest');
-    if (!role) throw new NotFoundException('Default role Guest not found');
+    // Force Guest role if no roleId is provided
+    let role;
+    if (roleId) {
+      role = await this.rolesService.findOne(roleId);
+      if (!role) throw new NotFoundException(`Role with ID ${roleId} not found`);
+    } else {
+      role = await this.rolesService.findByName('Guest');
+      if (!role) throw new NotFoundException('Default role Guest not found');
+    }
 
     const user = this.userRepository.create({
       ...userData,
@@ -159,6 +165,18 @@ export class UsersService {
 
     await this.userRepository.save(user);
     return true;
+  }
+
+  async deleteAllUsers() {
+    const query = this.userRepository.createQueryBuilder('user');
+    try {
+      return await query.delete().where({}).execute();
+    } catch (error) {
+      // Typically need to handle foreign-keys, but for dev seed it should be okay if cascade handles it, 
+      // or if nothing references user. Let's log it if it fails:
+      console.error('Error deleting users:', error);
+      throw error;
+    }
   }
 
 }
