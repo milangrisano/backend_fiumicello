@@ -47,4 +47,39 @@ export class MailService {
             throw error;
         }
     }
+
+    async sendPasswordResetCode(to: string, code: string): Promise<void> {
+        try {
+            await this.resend.emails.send({
+                from: this.from,
+                to,
+                subject: 'Restablecer tu contraseña - Fiumicello',
+                html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 480px; margin: auto; padding: 32px; background-color: #f9f9f9; border-radius: 8px;">
+                        <h2 style="color: #222; text-align: center;">Restablecer contraseña</h2>
+                        <p style="color: #555;">Hola,</p>
+                        <p style="color: #555;">Recibimos una solicitud para restablecer la contraseña de tu cuenta. Ingresa el siguiente código para continuar. Este código expira en <strong>3 minutos</strong>.</p>
+                        <div style="text-align: center; margin: 32px 0;">
+                            <span style="
+                                display: inline-block;
+                                font-size: 36px;
+                                font-weight: bold;
+                                letter-spacing: 10px;
+                                color: #1a1a1a;
+                                background: #fff;
+                                border: 2px solid #e0e0e0;
+                                border-radius: 8px;
+                                padding: 16px 24px;
+                            ">${code}</span>
+                        </div>
+                        <p style="color: #888; font-size: 13px; text-align: center;">Si no solicitaste este cambio, ignora este correo. Tu contraseña actual seguirá siendo válida.</p>
+                    </div>
+                `,
+            });
+            this.logger.log(`Password reset code sent to ${to}`);
+        } catch (error) {
+            this.logger.error(`Failed to send password reset email to ${to}:`, error);
+            throw error;
+        }
+    }
 }

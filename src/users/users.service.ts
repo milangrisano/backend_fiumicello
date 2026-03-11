@@ -167,6 +167,26 @@ export class UsersService {
     return true;
   }
 
+  async resetPassword(email: string, code: string, newPassword: string): Promise<boolean> {
+    const user = await this.findByEmail(email);
+    if (!user) return false;
+
+    if (!user.emailVerificationCode || user.emailVerificationCode !== code) {
+      return false;
+    }
+
+    if (!user.emailVerificationCodeExpiresAt || user.emailVerificationCodeExpiresAt < new Date()) {
+      return false;
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    user.emailVerificationCode = null;
+    user.emailVerificationCodeExpiresAt = null;
+
+    await this.userRepository.save(user);
+    return true;
+  }
+
   async deleteAllUsers() {
     const query = this.userRepository.createQueryBuilder('user');
     try {

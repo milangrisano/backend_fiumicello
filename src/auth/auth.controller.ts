@@ -47,4 +47,21 @@ export class AuthController {
     verifyCode(@Body() body: import('./dto/verify-code.dto').VerifyCodeDto) {
         return this.authService.verifyEmailCode(body.email, body.code);
     }
+
+    @Post('send-password-reset-code')
+    @ApiOperation({ summary: 'Send password reset code', description: 'Generates a 6-digit reset code and emails it. Response is always the same to not expose existing emails.' })
+    @ApiCreatedResponse({ description: 'Returns a success response without exposing if email exists.' })
+    @ApiBadRequestResponse({ description: 'Bad Request.' })
+    sendPasswordResetCode(@Body() body: import('./dto/send-verification-code.dto').SendVerificationCodeDto) {
+        return this.authService.sendPasswordResetCode(body.email);
+    }
+
+    @Post('reset-password')
+    @ApiOperation({ summary: 'Reset user password', description: 'Validates the 6-digit code and updates the password securely.' })
+    @ApiCreatedResponse({ description: 'Password reset successfully.' })
+    @ApiUnauthorizedResponse({ description: 'Invalid or expired code.' })
+    @ApiBadRequestResponse({ description: 'Bad Request.' })
+    resetPassword(@Body() body: import('./dto/reset-password.dto').ResetPasswordDto) {
+        return this.authService.resetPassword(body.email, body.code, body.newPassword);
+    }
 }

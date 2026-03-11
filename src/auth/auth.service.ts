@@ -79,4 +79,28 @@ export class AuthService {
 
         return { message: 'Email successfully verified' };
     }
+
+    async sendPasswordResetCode(email: string) {
+        const user = await this.usersService.findByEmail(email);
+        if (!user) {
+            // Respuesta silenciosa: no revelar qué emails existen
+            return { message: 'If the email exists, a password reset code has been sent.' };
+        }
+
+        const code = Math.floor(100000 + Math.random() * 900000).toString();
+        const expiresAt = new Date(Date.now() + 3 * 60 * 1000); // 3 minutos
+
+        await this.usersService.updateVerificationCode(email, code, expiresAt);
+        await this.mailService.sendPasswordResetCode(email, code);
+
+        return { message: 'If the email exists, a password reset code has been sent.' };
+    }
+
+    async resetPassword(email: string, code: string, newPassword: string) {
+        const success = await this.usersService.resetPassword(email, code, newPassword);
+        if (!success) {
+            throw new UnauthorizedException('Invalid or expired verification code');
+        }
+        return { message: 'Password reset successfully' };
+    }
 }
