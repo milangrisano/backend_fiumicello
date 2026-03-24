@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
@@ -86,8 +86,20 @@ export class UsersService {
     return user;
   }
 
-  async deactivate(id: string) {
-    const user = await this.findOne(id);
+  async deactivate(id: string, requester: any) {
+    const user = await this.userRepository.findOne({ where: { id }, relations: ['role'] });
+    if (!user) throw new NotFoundException('User not found');
+
+    // Protection 1: Nobody can deactivate a Super Admin
+    if (user.role.name === 'Super Admin') {
+      throw new ForbiddenException('Cannot deactivate a Super Admin user');
+    }
+
+    // Protection 2: Only Super Admin can deactivate an Admin
+    if (user.role.name === 'Admin' && requester.role !== 'Super Admin') {
+      throw new ForbiddenException('Only a Super Admin can deactivate an Admin user');
+    }
+
     user.isActive = false;
     const updatedUser = await this.userRepository.save(user);
     delete (updatedUser as any).password;
@@ -101,27 +113,41 @@ export class UsersService {
     return this.userRepository.findOne({ where: { email }, relations: ['role'] });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    const user = await this.findOne(id);
+  async update(id: string, updateUserDto: UpdateUserDto, requester?: any) {
+    const user = await this.userRepository.findOne({ where: { id }, relations: ['role'] });
     if (!user) throw new NotFoundException('User not found');
+    if (!user.isActive) throw new NotFoundException('User is inactive');
 
     if (updateUserDto.password) {
       updateUserDto.password = await bcrypt.hash(updateUserDto.password, 10);
     }
 
-    // Role update restriction: Should ideally be checked at controller/guard level or here.
-    // For now, if DTO contains roleId, we allow it (assuming Admin calls this).
-    // But strictly speaking, normal users shouldn't be able to update their role.
+    // Role update protection
     if (updateUserDto.roleId) {
-      const role = await this.rolesService.findOne(updateUserDto.roleId);
-      if (!role) throw new NotFoundException('Role not found');
-      user.role = role;
+      // 1. Only Super Admin can change the role of an Admin or another Super Admin
+      const isTargetCritical = ['Super Admin', 'Admin'].includes(user.role.name);
+      if (isTargetCritical && (!requester || requester.role !== 'Super Admin')) {
+        throw new ForbiddenException('Only a Super Admin can change the role of Admins or Super Admins');
+      }
+
+      const newRole = await this.rolesService.findOne(updateUserDto.roleId);
+      if (!newRole) throw new NotFoundException('Role not found');
+
+      // 2. Prevent changing the ONLY Super Admin (safety)
+      if (user.role.name === 'Super Admin' && newRole.name !== 'Super Admin') {
+        const superAdminCount = await this.userRepository.count({
+          where: { role: { name: 'Super Admin' }, isActive: true }
+        });
+        if (superAdminCount <= 1) {
+          throw new ForbiddenException('Cannot change the role of the last active Super Admin');
+        }
+      }
+
+      user.role = newRole;
       delete updateUserDto.roleId;
-      // Don't delete, just ignore in Object.assign? Or delete to be safe.
     }
 
     if (updateUserDto.restaurantId) {
-      // Assign restaurant relation
       user.restaurant = { id: updateUserDto.restaurantId } as any;
       delete updateUserDto.restaurantId;
     }

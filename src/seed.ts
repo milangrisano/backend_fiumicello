@@ -1,17 +1,18 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { UsersService } from './users/users.service';
-import { CreateUserDto } from './users/dto/create-user.dto';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap() {
     const app = await NestFactory.createApplicationContext(AppModule);
     const usersService = app.get(UsersService);
+    const configService = app.get(ConfigService);
 
-    const superAdminDto: CreateUserDto = {
+    const superAdminDto = {
         firstName: 'Super',
         lastName: 'Admin',
-        email: 'superadmin@example.com',
-        password: 'supersecurepassword',
+        email: configService.get<string>('SUPER_ADMIN_EMAIL') || 'superadmin@example.com',
+        password: configService.get<string>('SUPER_ADMIN_PASSWORD') || 'supersecurepassword',
     };
 
     try {

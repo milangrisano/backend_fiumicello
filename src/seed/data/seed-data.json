@@ -1,4 +1,13 @@
 {
+    "roles": [
+        { "name": "Super Admin", "description": "System Administrator with full access" },
+        { "name": "Admin", "description": "Administrator with managed access" },
+        { "name": "Manager", "description": "Has all permissions of Waiter, Cashier, and Chef." },
+        { "name": "Cashier", "description": "Can process any payment (digital/cash). Cannot modify existing orders without Waiter/Manager confirmation." },
+        { "name": "Waiter", "description": "Takes and modifies orders, adds products. Can process digital payments only (no cash)." },
+        { "name": "Chef", "description": "Views orders (without prices). Can only update order status: Commanded -> In Progress -> Ready." },
+        { "name": "Guest", "description": "Default role for new users" }
+    ],
     "pizzas": [
         {
             "name": "Margherita",

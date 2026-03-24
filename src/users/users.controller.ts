@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiCreatedResponse, ApiBadRequestResponse, ApiForbiddenResponse, ApiOkResponse, ApiNotFoundResponse } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { User } from './entities/user.entity';
@@ -46,8 +46,8 @@ export class UsersController {
   @ApiOkResponse({ description: 'The user has been successfully updated.', type: User })
   @ApiNotFoundResponse({ description: 'User not found.' })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Request() req) {
+    return this.usersService.update(id, updateUserDto, req.user);
   }
 
   @Patch(':id/deactivate')
@@ -55,8 +55,8 @@ export class UsersController {
   @ApiOkResponse({ description: 'The user has been successfully deactivated.' })
   @ApiNotFoundResponse({ description: 'User not found.' })
   @ApiForbiddenResponse({ description: 'Forbidden.' })
-  deactivate(@Param('id') id: string) {
-    return this.usersService.deactivate(id);
+  deactivate(@Param('id') id: string, @Request() req) {
+    return this.usersService.deactivate(id, req.user);
   }
 
 
