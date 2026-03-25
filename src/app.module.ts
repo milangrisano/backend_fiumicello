@@ -26,6 +26,7 @@ const importsArr: any[] = [
     password: process.env.DB_PASSWORD || 'MySecr3tPassWord',
     autoLoadEntities: true,
     synchronize: true, // development only
+    //NOTA: En producción usar synchronize: false y generar por defecto el Super Admin como el usuario con todos los privilegios y colocarlo en .env
   }),
   AuthModule,
   UsersModule,

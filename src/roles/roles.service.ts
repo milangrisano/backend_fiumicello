@@ -1,9 +1,10 @@
 import { Injectable, Logger, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, DataSource } from 'typeorm';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { Role } from './entities/role.entity';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class RolesService {
@@ -12,6 +13,7 @@ export class RolesService {
   constructor(
     @InjectRepository(Role)
     private readonly roleRepository: Repository<Role>,
+    private readonly dataSource: DataSource,
   ) { }
 
   create(createRoleDto: CreateRoleDto) {
@@ -19,12 +21,16 @@ export class RolesService {
     return this.roleRepository.save(role);
   }
 
-  findAll() {
-    return this.roleRepository.find({ where: { isActive: true } });
+  async findAll(requester?: any) {
+    const roles = await this.roleRepository.find();
+    if (requester && requester.role === 'Admin') {
+      return roles.filter(role => role.name !== 'Super Admin');
+    }
+    return roles;
   }
 
   findOne(id: number) {
-    return this.roleRepository.findOne({ where: { id, isActive: true } });
+    return this.roleRepository.findOne({ where: { id } });
   }
 
   async findByName(name: string) {
@@ -48,6 +54,22 @@ export class RolesService {
     }
 
     role.isActive = false;
+    const savedRole = await this.roleRepository.save(role);
+
+    // Deactivate all users that have this role
+    await this.dataSource.getRepository(User).update(
+      { role: { id: role.id } },
+      { isActive: false }
+    );
+
+    return savedRole;
+  }
+
+  async activate(id: number) {
+    const role = await this.findOne(id);
+    if (!role) throw new NotFoundException('Role not found');
+
+    role.isActive = true;
     return this.roleRepository.save(role);
   }
 }

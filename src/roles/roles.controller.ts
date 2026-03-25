@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiCreatedResponse, ApiOkResponse, ApiNotFoundResponse, ApiForbiddenResponse } from '@nestjs/swagger';
 import { RolesService } from './roles.service';
 import { Role } from './entities/role.entity';
@@ -11,11 +11,11 @@ import { Roles } from './roles.decorator';
 @ApiTags('Roles')
 @Controller('roles')
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('Super Admin')
 export class RolesController {
   constructor(private readonly rolesService: RolesService) { }
 
   @Post()
+  @Roles('Super Admin')
   @ApiOperation({ summary: 'Create role', description: 'Creates a new role.' })
   @ApiCreatedResponse({ description: 'The role has been successfully created.', type: Role })
   create(@Body() createRoleDto: CreateRoleDto) {
@@ -23,13 +23,15 @@ export class RolesController {
   }
 
   @Get()
+  @Roles('Super Admin', 'Admin')
   @ApiOperation({ summary: 'Get all roles', description: 'Retrieves a list of all roles.' })
   @ApiOkResponse({ description: 'List of roles.', type: [Role] })
-  findAll() {
-    return this.rolesService.findAll();
+  findAll(@Request() req: any) {
+    return this.rolesService.findAll(req.user);
   }
 
   @Get(':id')
+  @Roles('Super Admin', 'Admin')
   @ApiOperation({ summary: 'Get role by ID', description: 'Retrieves a single role by ID.' })
   @ApiOkResponse({ description: 'The role found.', type: Role })
   @ApiNotFoundResponse({ description: 'Role not found.' })
@@ -38,6 +40,7 @@ export class RolesController {
   }
 
   @Patch(':id')
+  @Roles('Super Admin')
   @ApiOperation({ summary: 'Update role', description: 'Updates a role by ID.' })
   @ApiOkResponse({ description: 'The role has been successfully updated.', type: Role })
   @ApiNotFoundResponse({ description: 'Role not found.' })
@@ -46,10 +49,20 @@ export class RolesController {
   }
 
   @Patch(':id/deactivate')
+  @Roles('Super Admin', 'Admin')
   @ApiOperation({ summary: 'Deactivate role', description: 'Deactivates a role by ID.' })
   @ApiOkResponse({ description: 'The role has been successfully deactivated.' })
   @ApiNotFoundResponse({ description: 'Role not found.' })
   deactivate(@Param('id') id: string) {
     return this.rolesService.deactivate(+id);
+  }
+
+  @Patch(':id/activate')
+  @Roles('Super Admin', 'Admin')
+  @ApiOperation({ summary: 'Activate role', description: 'Activates a role by ID.' })
+  @ApiOkResponse({ description: 'The role has been successfully activated.' })
+  @ApiNotFoundResponse({ description: 'Role not found.' })
+  activate(@Param('id') id: string) {
+    return this.rolesService.activate(+id);
   }
 }

@@ -74,7 +74,6 @@ export class UsersService {
 
   findAll() {
     return this.userRepository.find({
-      where: { isActive: true },
       relations: ['role']
     });
   }
