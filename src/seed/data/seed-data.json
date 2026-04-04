@@ -1,4 +1,59 @@
 {
+    "categories": [
+        {
+            "name": "Pizzas",
+            "description": "Pizzas artesanales"
+        },
+        {
+            "name": "Lasagnas",
+            "description": "Lasagnas de la casa"
+        },
+        {
+            "name": "Paninis",
+            "description": "Sándwiches italianos"
+        },
+        {
+            "name": "Bebidas",
+            "description": "Bebidas y refrescos"
+        }
+    ],
+    "paymentMethods": [
+        {
+            "name": "Efectivo"
+        },
+        {
+            "name": "Datafono Bold"
+        },
+        {
+            "name": "Nequi"
+        },
+        {
+            "name": "Transferencia QR"
+        }
+    ],
+    "terminals": [
+        {
+            "name": "Caja Principal"
+        },
+        {
+            "name": "Caja Secundaria"
+        },
+        {
+            "name": "Terminal Móvil 1"
+        }
+    ],
+    "restaurants": [
+        {
+            "name": "FiumicelloSamsung",
+            "city": "Bogotá",
+            "address": "Carrera 7 #113-43"
+        },
+        {
+            "name": "Fiumicello Calambeo",
+            "city": "Ibagué",
+            "address": "Calle 19 #26-67"
+        }
+    ],
     "roles": [
         {
             "name": "Super Admin",

@@ -17,9 +17,9 @@ export class TerminalsController {
     @Post()
     @ApiOperation({ summary: 'Create terminal', description: 'Creates a new terminal. Requires Super Admin or Admin role.' })
     @ApiCreatedResponse({ description: 'The terminal has been successfully created.', type: Terminal })
-    @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin or Admin role.' })
+    @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin, Admin or Administrador role.' })
     @UseGuards(RolesGuard)
-    @Roles('Super Admin', 'Admin')
+    @Roles('Super Admin', 'Admin', 'Administrador')
     create(@Body() createTerminalDto: CreateTerminalDto) {
         return this.terminalsService.create(createTerminalDto);
     }
@@ -43,9 +43,9 @@ export class TerminalsController {
     @ApiOperation({ summary: 'Update terminal', description: 'Updates a terminal by ID. Requires Super Admin or Admin role.' })
     @ApiOkResponse({ description: 'The terminal has been successfully updated.', type: Terminal })
     @ApiNotFoundResponse({ description: 'Terminal not found.' })
-    @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin or Admin role.' })
+    @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin, Admin or Administrador role.' })
     @UseGuards(RolesGuard)
-    @Roles('Super Admin', 'Admin')
+    @Roles('Super Admin', 'Admin', 'Administrador')
     update(@Param('id', ParseIntPipe) id: number, @Body() updateTerminalDto: UpdateTerminalDto) {
         return this.terminalsService.update(id, updateTerminalDto);
     }

@@ -13,6 +13,7 @@ import { SalesModule } from './sales/sales.module';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { TerminalsModule } from './terminals/terminals.module';
 import { SeedModule } from './seed/seed.module';
+import { CategoriesModule } from './categories/categories.module';
 
 const importsArr: any[] = [
   ConfigModule.forRoot(),
@@ -36,6 +37,7 @@ const importsArr: any[] = [
   SalesModule,
   PaymentMethodsModule,
   TerminalsModule,
+  CategoriesModule,
 ];
 
 // Load SeedModule only in non-production environments

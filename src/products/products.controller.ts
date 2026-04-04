@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, ParseUUIDPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, ParseUUIDPipe, UseGuards, Req, Query } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -20,10 +20,11 @@ export class ProductsController {
     }
 
     @Get()
+    @UseGuards(JwtAuthGuard)
     @ApiOperation({ summary: 'Get all products', description: 'Retrieves a list of all products.' })
     @ApiOkResponse({ description: 'List of products.', type: [Product] })
-    findAll() {
-        return this.productsService.findAll();
+    findAll(@Req() req, @Query('restaurantId') restaurantId?: string) {
+        return this.productsService.findAll(req.user, restaurantId);
     }
 
     @Get(':term')

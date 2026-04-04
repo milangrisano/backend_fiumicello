@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany, JoinTable, ManyToOne } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
 import { ProductImage } from './product-image.entity'; // Import check
 import { Restaurant } from '../../restaurants/entities/restaurant.entity';
+import { Category } from '../../categories/entities/category.entity';
 
 @Entity()
 export class Product {
@@ -17,9 +18,9 @@ export class Product {
     @Column('text')
     type: string; // The Size or specific variant
 
-    @ApiProperty({ description: 'Category of the product', example: 'Pizzas' })
-    @Column('text')
-    category: string; // Pizzas, Pastas, Bebidas, Lasagnas, Paninis
+    @ApiProperty({ description: 'Category of the product', type: () => Category })
+    @ManyToOne(() => Category, (category) => category.products, { eager: true })
+    category: Category;
 
     @ApiProperty({ description: 'Detailed description of the product', required: false })
     @Column({
@@ -48,10 +49,9 @@ export class Product {
     )
     images?: ProductImage[];
 
-    @ApiProperty({ description: 'Restaurants where this product is available', type: () => [Restaurant] })
-    @ManyToMany(() => Restaurant, { eager: true })
-    @JoinTable({ name: 'products_restaurants' })
-    restaurants: Restaurant[];
+    @ApiProperty({ description: 'Restaurant where this product is available', type: () => Restaurant })
+    @ManyToOne(() => Restaurant, restaurant => restaurant.products, { eager: true })
+    restaurant: Restaurant;
 
     @ApiProperty({ description: 'Date of creation' })
     @CreateDateColumn()

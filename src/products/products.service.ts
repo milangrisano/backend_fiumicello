@@ -18,32 +18,43 @@ export class ProductsService {
     ) { }
 
     async create(createProductDto: CreateProductDto) {
-        const { images = [], restaurantIds, ...productDetails } = createProductDto;
+        const { images = [], restaurantId, categoryId, ...productDetails } = createProductDto;
 
         const product = this.productRepository.create({
             ...productDetails,
+            category: categoryId ? { id: categoryId } as any : undefined,
+            restaurant: restaurantId ? { id: restaurantId } as any : undefined,
             images: images.map((image) =>
                 this.productImageRepository.create({ url: image.url, name: image.name }),
             ),
         });
-
-        if (restaurantIds && restaurantIds.length > 0) {
-            // Need to load restaurants. For now, simple object with ID is enough for TypeORM if logic permits
-            // Or inject RestaurantRepository.
-            product.restaurants = restaurantIds.map(id => ({ id } as any));
-        }
 
         await this.productRepository.save(product);
 
         return { ...product, images };
     }
 
-    async findAll() {
-        // Only return active products
+    async findAll(user?: any, filterRestaurantId?: string) {
+        // Build the where condition based on user roles
+        let whereCondition: any = {};
+        
+        if (user) {
+            // El JWT inyecta 'role' como string plano, no como objeto
+            const isAgnosticRole = user.role === 'Super Admin' || user.role === 'Admin';
+            if (!isAgnosticRole && user.restaurant?.id) {
+                // If not an admin/super admin, force filter to their own restaurant
+                whereCondition.restaurant = { id: user.restaurant.id };
+            } else if (isAgnosticRole && filterRestaurantId) {
+                // If admin/super admin AND they requested a specific restaurant filter
+                whereCondition.restaurant = { id: filterRestaurantId };
+            }
+        }
+
         const products = await this.productRepository.find({
-            where: { isActive: true },
+            where: whereCondition,
             relations: {
                 images: true,
+                restaurant: true,
             },
         });
 
@@ -85,11 +96,13 @@ export class ProductsService {
     }
 
     async update(id: string, updateProductDto: UpdateProductDto) {
-        const { images, ...toUpdate } = updateProductDto;
+        const { images, restaurantId, categoryId, ...toUpdate } = updateProductDto;
 
         const product = await this.productRepository.preload({
             id,
             ...toUpdate,
+            category: categoryId ? { id: categoryId } as any : undefined,
+            restaurant: restaurantId ? { id: restaurantId } as any : undefined,
         });
 
         if (!product)

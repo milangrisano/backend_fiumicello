@@ -128,13 +128,13 @@ export class SalesService {
             for (const item of addItemsDto.items) {
                 const product = await this.productRepository.findOne({
                     where: { id: item.productId, isActive: true },
-                    relations: ['restaurants']
+                    relations: ['restaurant']
                 });
 
                 if (!product) throw new NotFoundException(`Product ${item.productId} not found`);
 
                 // Check if product belongs to restaurant
-                const isAvailable = product.restaurants.some(r => r.id === sale.restaurant.id);
+                const isAvailable = product.restaurant && product.restaurant.id === sale.restaurant.id;
                 if (!isAvailable) throw new BadRequestException(`Product ${product.type} is not available in this restaurant`);
 
                 const subtotal = Number(product.price) * Number(item.quantity);

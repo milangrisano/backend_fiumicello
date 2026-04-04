@@ -72,4 +72,14 @@ export class RolesService {
     role.isActive = true;
     return this.roleRepository.save(role);
   }
+
+  async deleteAllRoles() {
+    const query = this.roleRepository.createQueryBuilder('role');
+    try {
+      return await query.delete().where({}).execute();
+    } catch (error) {
+      console.error('Error deleting roles:', error);
+      throw error;
+    }
+  }
 }

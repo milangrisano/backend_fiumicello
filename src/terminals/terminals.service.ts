@@ -18,9 +18,7 @@ export class TerminalsService {
     }
 
     findAll() {
-        return this.terminalRepository.find({
-            where: { isActive: true }
-        });
+        return this.terminalRepository.find();
     }
 
     async findOne(id: number) {
@@ -42,5 +40,15 @@ export class TerminalsService {
         }
 
         return this.terminalRepository.save(terminal);
+    }
+
+    async deleteAllTerminals() {
+        const query = this.terminalRepository.createQueryBuilder('terminal');
+        try {
+            return await query.delete().where({}).execute();
+        } catch (error) {
+            console.error('Error deleting terminals:', error);
+            throw error;
+        }
     }
 }

@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsOptional, IsBoolean, IsArray, Min } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsArray, Min, IsUUID } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateProductDto {
@@ -8,8 +8,8 @@ export class CreateProductDto {
     @IsString()
     type: string;
 
-    @IsString()
-    category: string;
+    @IsUUID()
+    categoryId: string;
 
     @IsString()
     @IsOptional()
@@ -28,9 +28,8 @@ export class CreateProductDto {
     @IsOptional()
     isActive?: boolean;
 
-    @IsArray()
-    @IsOptional()
-    restaurantIds?: string[];
+    @IsUUID()
+    restaurantId: string;
 
     @IsArray()
     @IsOptional()

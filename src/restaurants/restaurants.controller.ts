@@ -17,8 +17,8 @@ export class RestaurantsController {
     @Post()
     @ApiOperation({ summary: 'Create restaurant', description: 'Creates a new restaurant. Requires Super Admin role.' })
     @ApiCreatedResponse({ description: 'The restaurant has been successfully created.', type: Restaurant })
-    @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin role.' })
-    @Roles('Super Admin')
+    @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin or Admin role.' })
+    @Roles('Super Admin', 'Admin', 'Administrador')
     create(@Body() createRestaurantDto: CreateRestaurantDto) {
         return this.restaurantsService.create(createRestaurantDto);
     }
@@ -43,7 +43,7 @@ export class RestaurantsController {
     @ApiOkResponse({ description: 'The restaurant has been successfully updated.', type: Restaurant })
     @ApiNotFoundResponse({ description: 'Restaurant not found.' })
     @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin or Admin role.' })
-    @Roles('Super Admin', 'Admin')
+    @Roles('Super Admin', 'Admin', 'Administrador')
     update(@Param('id') id: string, @Body() updateRestaurantDto: UpdateRestaurantDto) {
         return this.restaurantsService.update(id, updateRestaurantDto);
     }
@@ -52,8 +52,8 @@ export class RestaurantsController {
     @ApiOperation({ summary: 'Deactivate restaurant', description: 'Deactivates a restaurant by ID. Requires Super Admin role.' })
     @ApiOkResponse({ description: 'The restaurant has been successfully deactivated.' })
     @ApiNotFoundResponse({ description: 'Restaurant not found.' })
-    @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin role.' })
-    @Roles('Super Admin')
+    @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin or Admin role.' })
+    @Roles('Super Admin', 'Admin', 'Administrador')
     deactivate(@Param('id') id: string) {
         return this.restaurantsService.deactivate(id);
     }

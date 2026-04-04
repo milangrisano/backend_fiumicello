@@ -41,4 +41,8 @@ export class Restaurant {
     @ApiProperty({ description: 'Users (staff) assigned to the restaurant', type: () => [User] })
     @OneToMany(() => User, (user) => user.restaurant)
     users: User[];
+
+    @ApiProperty({ description: 'Products sold in this restaurant', type: () => [Product] })
+    @OneToMany(() => Product, (product) => product.restaurant)
+    products: Product[];
 }

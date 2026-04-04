@@ -18,7 +18,7 @@ export class RestaurantsService {
     }
 
     findAll() {
-        return this.restaurantRepository.find({ where: { isActive: true } });
+        return this.restaurantRepository.find();
     }
 
     async findOne(id: string) {
@@ -49,5 +49,15 @@ export class RestaurantsService {
         const restaurant = await this.findOne(id);
         restaurant.isActive = false;
         return this.restaurantRepository.save(restaurant);
+    }
+
+    async deleteAllRestaurants() {
+        const query = this.restaurantRepository.createQueryBuilder('restaurant');
+        try {
+            return await query.delete().where({}).execute();
+        } catch (error) {
+            console.error('Error deleting restaurants:', error);
+            throw error;
+        }
     }
 }

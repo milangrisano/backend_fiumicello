@@ -18,10 +18,7 @@ export class PaymentMethodsService {
     }
 
     findAll() {
-        return this.paymentMethodRepository.find({
-            where: { isActive: true } // Default to active? Or all? Usually admins want to see all.
-            // For now, returning all for CRUD management.
-        });
+        return this.paymentMethodRepository.find();
     }
 
     async findOne(id: number) {
@@ -50,5 +47,15 @@ export class PaymentMethodsService {
         const paymentMethod = await this.findOne(id);
         paymentMethod.isActive = false;
         return this.paymentMethodRepository.save(paymentMethod);
+    }
+
+    async deleteAllPaymentMethods() {
+        const query = this.paymentMethodRepository.createQueryBuilder('paymentMethod');
+        try {
+            return await query.delete().where({}).execute();
+        } catch (error) {
+            console.error('Error deleting payment methods:', error);
+            throw error;
+        }
     }
 }
