@@ -238,34 +238,22 @@ export class SeedService {
 
         if (!usersToSeed) return;
 
-        const restaurants = await this.restaurantsService.findAll();
-        let defaultRestaurantId;
-        if (restaurants.length > 0) {
-            defaultRestaurantId = restaurants[0].id;
-        }
-
         for (const user of usersToSeed) {
             try {
-                // Get the role by name directly
                 const role = await this.rolesService.findByName(user.roleName);
                 let roleId: number | undefined;
-                let restaurantId: string | undefined;
 
                 if (role) {
                     roleId = role.id;
-                    // Assign default restaurant to everyone to avoid N/A in the interface
-                    restaurantId = defaultRestaurantId;
                 }
 
-                // create() expects CreateUserDto
                 const { roleName, ...userData } = user;
 
                 await this.usersService.create({ 
                     ...userData, 
                     roleId,
-                    restaurantId 
                 } as any);
-                console.log(`Seeded user: ${user.email} (Role: ${user.roleName}, Restaurant: ${restaurantId ? 'Assigned' : 'None'})`);
+                console.log(`Seeded user: ${user.email} (Role: ${user.roleName})`);
             } catch (error) {
                 console.error(`Error seeding user ${user.email}:`, error);
             }
