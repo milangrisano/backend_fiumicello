@@ -367,7 +367,8 @@
             "firstName": "Test",
             "lastName": "Waiter",
             "phone": "222222222",
-            "roleName": "Waiter"
+            "roleName": "Waiter",
+            "restaurantName": "FiumicelloSamsung"
         },
         {
             "email": "cashier@test.com",
@@ -375,7 +376,8 @@
             "firstName": "Test",
             "lastName": "Cashier",
             "phone": "333333333",
-            "roleName": "Cashier"
+            "roleName": "Cashier",
+            "restaurantName": "FiumicelloSamsung"
         },
         {
             "email": "user@test.com",
@@ -392,6 +394,41 @@
             "lastName": "Admin",
             "phone": "555555555",
             "roleName": "Super Admin"
+        }
+    ],
+    "tables": [
+        { "name": "Mesa 1", "restaurantName": "FiumicelloSamsung" },
+        { "name": "Mesa 2", "restaurantName": "FiumicelloSamsung" },
+        { "name": "Mesa 3", "restaurantName": "FiumicelloSamsung" },
+        { "name": "Mesa 1", "restaurantName": "Fiumicello Calambeo" },
+        { "name": "Mesa 2", "restaurantName": "Fiumicello Calambeo" }
+    ],
+    "sales": [
+        {
+            "dinerName": "Juan Perez",
+            "dinerEmail": "juan@test.com",
+            "restaurantName": "FiumicelloSamsung",
+            "tableName": "Mesa 1",
+            "userEmail": "waiter@test.com",
+            "paymentMethodName": "Efectivo",
+            "status": "CLOSED",
+            "items": [
+                { "productName": "Margherita", "productType": "Personal", "quantity": 1 },
+                { "productName": "Coca-Cola Original", "productType": "Gaseosa", "quantity": 2 }
+            ]
+        },
+        {
+            "dinerName": "Maria Lopez",
+            "dinerEmail": "maria@test.com",
+            "restaurantName": "Fiumicello Calambeo",
+            "tableName": "Mesa 1",
+            "userEmail": "waiter@test.com",
+            "paymentMethodName": "Nequi",
+            "status": "CLOSED",
+            "items": [
+                { "productName": "Pepperoni", "productType": "Grande", "quantity": 1 },
+                { "productName": "Miller Lite", "productType": "Cerveza", "quantity": 4 }
+            ]
         }
     ]
 }
