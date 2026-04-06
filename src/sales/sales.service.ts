@@ -12,6 +12,7 @@ import { Restaurant } from '../restaurants/entities/restaurant.entity';
 import { User } from '../users/entities/user.entity';
 import { Product } from '../products/entities/product.entity';
 import { SaleStatus } from './sale-status.enum';
+import { OrderType } from './order-type.enum';
 import { PaymentMethod } from '../payment-methods/entities/payment-method.entity';
 import { SalesGateway } from './sales.gateway';
 @Injectable()
@@ -51,44 +52,53 @@ export class SalesService {
 
         if (!user) throw new NotFoundException('User not found');
 
-        const { tableId } = createSaleDto;
+        const { tableId, dinerName, orderType } = createSaleDto;
+        const actualOrderType = orderType || OrderType.DINE_IN;
 
         // 1. Validate User's Restaurant
         if (!user.restaurant) {
             throw new BadRequestException('User is not assigned to any restaurant');
         }
 
-        // 2. Validate Table
-        const table = await this.tableRepository.findOne({
-            where: { id: tableId },
-            relations: ['restaurant']
-        });
+        let table: Table | null = null;
 
-        if (!table) throw new NotFoundException('Table not found');
-        if (!table.isActive) throw new BadRequestException('Table is inactive');
-        if (table.restaurant.id !== user.restaurant.id) {
-            throw new BadRequestException('Table does not belong to your restaurant');
-        }
+        if (tableId) {
+            // 2. Validate Table
+            table = await this.tableRepository.findOne({
+                where: { id: tableId },
+                relations: ['restaurant']
+            });
 
-        // 3. Check if Table is already open
-        const existingOpenSale = await this.saleRepository.findOne({
-            where: {
-                table: { id: tableId },
-                status: SaleStatus.OPEN // Use enum for status
+            if (!table) throw new NotFoundException('Table not found');
+            if (!table.isActive) throw new BadRequestException('Table is inactive');
+            if (table.restaurant.id !== user.restaurant.id) {
+                throw new BadRequestException('Table does not belong to your restaurant');
             }
-        });
 
-        if (existingOpenSale) {
-            throw new BadRequestException(`Table ${table.name} is already open with Sale ID ${existingOpenSale.id}`);
+            // 3. Check if Table is already open (usually relevant for DINE_IN)
+            if (actualOrderType === OrderType.DINE_IN) {
+                const existingOpenSale = await this.saleRepository.findOne({
+                    where: {
+                        table: { id: tableId },
+                        status: SaleStatus.OPEN
+                    }
+                });
+
+                if (existingOpenSale) {
+                    throw new BadRequestException(`Table ${table.name} is already open with Sale ID ${existingOpenSale.id}`);
+                }
+            }
         }
 
         const sale = this.saleRepository.create({
             user: user,
-            table: table,
+            table: table || undefined,
             restaurant: user.restaurant,
             status: SaleStatus.OPEN, // Use enum for status
             total: 0,
-            details: []
+            details: [],
+            dinerName: dinerName,
+            orderType: actualOrderType,
         });
 
         const savedSale = await this.saleRepository.save(sale);

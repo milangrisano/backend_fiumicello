@@ -18,6 +18,14 @@ export class Table {
     @Column('boolean', { default: true })
     isActive: boolean;
 
+    @ApiProperty({ description: 'X coordinate for visual layout', required: false, default: 0 })
+    @Column('float', { default: 0 })
+    x: number;
+
+    @ApiProperty({ description: 'Y coordinate for visual layout', required: false, default: 0 })
+    @Column('float', { default: 0 })
+    y: number;
+
     @ApiProperty({ description: 'The restaurant this table belongs to', type: () => Restaurant })
     @ManyToOne(() => Restaurant, (restaurant) => restaurant.tables, { onDelete: 'CASCADE', eager: true })
     restaurant: Restaurant;

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty, IsBoolean, IsOptional, IsUUID } from 'class-validator';
+import { IsString, IsNotEmpty, IsBoolean, IsOptional, IsUUID, IsNumber } from 'class-validator';
 
 export class CreateTableDto {
     @IsString()
@@ -12,4 +12,12 @@ export class CreateTableDto {
     @IsBoolean()
     @IsOptional()
     isActive?: boolean;
+
+    @IsNumber()
+    @IsOptional()
+    x?: number;
+
+    @IsNumber()
+    @IsOptional()
+    y?: number;
 }

@@ -8,6 +8,7 @@ import { Table } from '../../tables/entities/table.entity';
 import { Restaurant } from '../../restaurants/entities/restaurant.entity';
 import { SaleStatus } from '../sale-status.enum';
 import { InvoiceType } from '../invoice-type.enum';
+import { OrderType } from '../order-type.enum';
 
 @Entity('sales')
 export class Sale {
@@ -30,6 +31,10 @@ export class Sale {
     @ApiProperty({ description: 'Type of invoice (POS or Electronic)', enum: InvoiceType, required: false })
     @Column({ type: 'text', nullable: true })
     invoiceType: string;
+
+    @ApiProperty({ description: 'Type of order', enum: OrderType, default: OrderType.DINE_IN })
+    @Column('text', { default: OrderType.DINE_IN })
+    orderType: OrderType;
 
     @ApiProperty({ description: 'Name of the diner', required: false })
     @Column('text', { nullable: true })

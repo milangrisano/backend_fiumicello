@@ -1,5 +1,6 @@
-import { IsNumber, IsUUID, IsArray, ValidateNested, IsNotEmpty, Min } from 'class-validator';
+import { IsNumber, IsUUID, IsArray, ValidateNested, IsNotEmpty, Min, IsOptional, IsString, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
+import { OrderType } from '../order-type.enum';
 
 class SaleDetailItemDto {
     @IsUUID()
@@ -13,6 +14,14 @@ class SaleDetailItemDto {
 
 export class CreateSaleDto {
     @IsNumber()
-    @IsNotEmpty()
-    tableId: number;
+    @IsOptional()
+    tableId?: number;
+
+    @IsString()
+    @IsOptional()
+    dinerName?: string;
+
+    @IsEnum(OrderType)
+    @IsOptional()
+    orderType?: OrderType;
 }
