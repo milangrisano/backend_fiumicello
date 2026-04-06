@@ -394,14 +394,37 @@
             "lastName": "Admin",
             "phone": "555555555",
             "roleName": "Super Admin"
+        },
+        {
+            "email": "chef@test.com",
+            "password": "password123",
+            "firstName": "Test",
+            "lastName": "Chef",
+            "phone": "666666666",
+            "roleName": "Chef"
         }
     ],
     "tables": [
-        { "name": "Mesa 1", "restaurantName": "FiumicelloSamsung" },
-        { "name": "Mesa 2", "restaurantName": "FiumicelloSamsung" },
-        { "name": "Mesa 3", "restaurantName": "FiumicelloSamsung" },
-        { "name": "Mesa 1", "restaurantName": "Fiumicello Calambeo" },
-        { "name": "Mesa 2", "restaurantName": "Fiumicello Calambeo" }
+        {
+            "name": "Mesa 1",
+            "restaurantName": "FiumicelloSamsung"
+        },
+        {
+            "name": "Mesa 2",
+            "restaurantName": "FiumicelloSamsung"
+        },
+        {
+            "name": "Mesa 3",
+            "restaurantName": "FiumicelloSamsung"
+        },
+        {
+            "name": "Mesa 1",
+            "restaurantName": "Fiumicello Calambeo"
+        },
+        {
+            "name": "Mesa 2",
+            "restaurantName": "Fiumicello Calambeo"
+        }
     ],
     "sales": [
         {
@@ -413,8 +436,16 @@
             "paymentMethodName": "Efectivo",
             "status": "CLOSED",
             "items": [
-                { "productName": "Margherita", "productType": "Personal", "quantity": 1 },
-                { "productName": "Coca-Cola Original", "productType": "Gaseosa", "quantity": 2 }
+                {
+                    "productName": "Margherita",
+                    "productType": "Personal",
+                    "quantity": 1
+                },
+                {
+                    "productName": "Coca-Cola Original",
+                    "productType": "Gaseosa",
+                    "quantity": 2
+                }
             ]
         },
         {
@@ -426,8 +457,16 @@
             "paymentMethodName": "Nequi",
             "status": "CLOSED",
             "items": [
-                { "productName": "Pepperoni", "productType": "Grande", "quantity": 1 },
-                { "productName": "Miller Lite", "productType": "Cerveza", "quantity": 4 }
+                {
+                    "productName": "Pepperoni",
+                    "productType": "Grande",
+                    "quantity": 1
+                },
+                {
+                    "productName": "Miller Lite",
+                    "productType": "Cerveza",
+                    "quantity": 4
+                }
             ]
         }
     ]

@@ -13,7 +13,7 @@ import { User } from '../users/entities/user.entity';
 import { Product } from '../products/entities/product.entity';
 import { SaleStatus } from './sale-status.enum';
 import { PaymentMethod } from '../payment-methods/entities/payment-method.entity';
-
+import { SalesGateway } from './sales.gateway';
 @Injectable()
 export class SalesService {
     constructor(
@@ -39,6 +39,7 @@ export class SalesService {
         private readonly userRepository: Repository<User>,
 
         private readonly dataSource: DataSource,
+        private readonly salesGateway: SalesGateway,
     ) { }
 
     async create(createSaleDto: CreateSaleDto, reqUser: any) {
@@ -81,7 +82,6 @@ export class SalesService {
             throw new BadRequestException(`Table ${table.name} is already open with Sale ID ${existingOpenSale.id}`);
         }
 
-        // 4. Create Sale (Open Order)
         const sale = this.saleRepository.create({
             user: user,
             table: table,
@@ -91,7 +91,9 @@ export class SalesService {
             details: []
         });
 
-        return this.saleRepository.save(sale);
+        const savedSale = await this.saleRepository.save(sale);
+        this.salesGateway.notifySaleCreated(savedSale);
+        return savedSale;
     }
 
     async addItems(id: string, addItemsDto: AddItemsDto, reqUser: any) {
@@ -158,7 +160,9 @@ export class SalesService {
 
             await queryRunner.commitTransaction();
 
-            return this.saleRepository.findOne({ where: { id }, relations: ['details', 'details.product'] });
+            const updatedSale = await this.saleRepository.findOne({ where: { id }, relations: ['table', 'details', 'details.product'] });
+            this.salesGateway.notifySaleUpdated(updatedSale);
+            return updatedSale;
 
         } catch (err) {
             await queryRunner.rollbackTransaction();
@@ -207,7 +211,9 @@ export class SalesService {
         sale.invoiceType = closeSaleDto.invoiceType;
         sale.status = SaleStatus.CLOSED; // Mark as COMPLETED/CLOSED
 
-        return this.saleRepository.save(sale);
+        const savedSale = await this.saleRepository.save(sale);
+        this.salesGateway.notifySaleUpdated(savedSale);
+        return savedSale;
     }
 
     async updateStatus(id: string, updateSaleStatusDto: UpdateSaleStatusDto, reqUser: any) {
@@ -234,7 +240,9 @@ export class SalesService {
         }
 
         sale.status = updateSaleStatusDto.status;
-        return this.saleRepository.save(sale);
+        const savedSale = await this.saleRepository.save(sale);
+        this.salesGateway.notifySaleUpdated(savedSale);
+        return savedSale;
     }
 
     private stripPricesForChef(sale: Sale): Sale {
@@ -250,7 +258,8 @@ export class SalesService {
 
     async findAll(reqUser: any) {
         const sales = await this.saleRepository.find({
-            order: { createdAt: 'DESC' }
+            order: { createdAt: 'DESC' },
+            relations: ['table', 'details', 'details.product']
         });
 
         // Strip prices if role is Chef
@@ -262,7 +271,10 @@ export class SalesService {
     }
 
     async findOne(id: string, reqUser?: any) {
-        const sale = await this.saleRepository.findOne({ where: { id } });
+        const sale = await this.saleRepository.findOne({ 
+            where: { id },
+            relations: ['table', 'details', 'details.product']
+        });
 
         if (!sale) throw new NotFoundException('Sale not found');
 

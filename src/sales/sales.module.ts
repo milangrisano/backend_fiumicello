@@ -11,6 +11,7 @@ import { Table } from '../tables/entities/table.entity';
 import { Restaurant } from '../restaurants/entities/restaurant.entity';
 import { AuthModule } from '../auth/auth.module';
 import { User } from '../users/entities/user.entity';
+import { SalesGateway } from './sales.gateway';
 
 @Module({
     imports: [
@@ -18,7 +19,7 @@ import { User } from '../users/entities/user.entity';
         AuthModule,
     ],
     controllers: [SalesController],
-    providers: [SalesService],
+    providers: [SalesService, SalesGateway],
     exports: [SalesService],
 })
 export class SalesModule { }
