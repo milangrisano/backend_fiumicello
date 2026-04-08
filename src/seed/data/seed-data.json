@@ -57,31 +57,43 @@
     "roles": [
         {
             "name": "Super Admin",
-            "description": "System Administrator with full access"
+            "description": "System Administrator with full access",
+            "permissions": ["all"]
         },
         {
             "name": "Admin",
-            "description": "Administrator with managed access"
+            "description": "Administrator with managed access",
+            "permissions": ["utilities:access", "utilities:roles", "utilities:users", "utilities:products", "utilities:payment_methods", "utilities:categories", "utilities:restaurants", "utilities:terminals", "tables:manage", "sales:view_history", "kitchen:view", "kitchen:edit", "sales:manage"]
         },
         {
             "name": "Manager",
-            "description": "Has all permissions of Waiter, Cashier, and Chef."
+            "description": "Has all permissions of Waiter, Cashier, and Chef.",
+            "permissions": ["tables:manage", "sales:manage", "kitchen:view", "kitchen:edit", "sales:view_history"]
         },
         {
             "name": "Cashier",
-            "description": "Can process any payment (digital/cash). Cannot modify existing orders without Waiter/Manager confirmation."
+            "description": "Can process any payment (digital/cash). Cannot modify existing orders without Waiter/Manager confirmation.",
+            "permissions": ["sales:manage_active_payments", "sales:view_history", "tables:view"]
         },
         {
             "name": "Waiter",
-            "description": "Takes and modifies orders, adds products. Can process digital payments only (no cash)."
+            "description": "Takes and modifies orders, adds products. Can process digital payments only (no cash).",
+            "permissions": ["sales:manage", "tables:view"]
         },
         {
             "name": "Chef",
-            "description": "Views orders (without prices). Can only update order status: Commanded -> In Progress -> Ready."
+            "description": "Views orders and updates status: Commanded -> In Progress -> Ready.",
+            "permissions": ["kitchen:view", "kitchen:edit"]
+        },
+        {
+            "name": "Cook",
+            "description": "Read-only access to Kitchen display screens.",
+            "permissions": ["kitchen:view"]
         },
         {
             "name": "Guest",
-            "description": "Default role for new users"
+            "description": "Default role for new users",
+            "permissions": ["guest:view"]
         }
     ],
     "pizzas": [
@@ -402,6 +414,14 @@
             "lastName": "Chef",
             "phone": "666666666",
             "roleName": "Chef"
+        },
+        {
+            "email": "cook@test.com",
+            "password": "password123",
+            "firstName": "Line",
+            "lastName": "Cook",
+            "phone": "777777777",
+            "roleName": "Cook"
         }
     ],
     "tables": [

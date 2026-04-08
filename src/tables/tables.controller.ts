@@ -19,7 +19,7 @@ export class TablesController {
     @ApiCreatedResponse({ description: 'The table has been successfully created.', type: Table })
     @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin or Admin role.' })
     @UseGuards(RolesGuard)
-    @Roles('Super Admin', 'Admin')
+    @Roles('Super Admin', 'Admin', 'Manager')
     create(@Body() createTableDto: CreateTableDto) {
         return this.tablesService.create(createTableDto);
     }
@@ -45,7 +45,7 @@ export class TablesController {
     @ApiNotFoundResponse({ description: 'Table not found.' })
     @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin or Admin role.' })
     @UseGuards(RolesGuard)
-    @Roles('Super Admin', 'Admin')
+    @Roles('Super Admin', 'Admin', 'Manager')
     update(@Param('id', ParseIntPipe) id: number, @Body() updateTableDto: UpdateTableDto) {
         return this.tablesService.update(id, updateTableDto);
     }
@@ -56,7 +56,7 @@ export class TablesController {
     @ApiNotFoundResponse({ description: 'Table not found.' })
     @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin or Admin role.' })
     @UseGuards(RolesGuard)
-    @Roles('Super Admin', 'Admin')
+    @Roles('Super Admin', 'Admin', 'Manager')
     deactivate(@Param('id') id: string) {
         return this.tablesService.deactivate(+id);
     }

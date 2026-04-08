@@ -20,6 +20,10 @@ export class Role {
     @Column({ default: true })
     isActive: boolean;
 
+    @ApiProperty({ description: 'The permissions assigned to the role', example: ['sales:access'] })
+    @Column('simple-array', { default: '' })
+    permissions: string[];
+
     @OneToMany(() => User, (user) => user.role)
     users: User[];
 }

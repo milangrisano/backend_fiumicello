@@ -48,6 +48,16 @@ export class RolesController {
     return this.rolesService.update(+id, updateRoleDto);
   }
 
+  @Patch(':id/permissions')
+  @Roles('Super Admin', 'Admin')
+  @ApiOperation({ summary: 'Update role permissions', description: 'Updates permissions for a role.' })
+  @ApiOkResponse({ description: 'The role permissions have been successfully updated.', type: Role })
+  @ApiNotFoundResponse({ description: 'Role not found.' })
+  updatePermissions(@Param('id') id: string, @Body('permissions') permissions: string[]) {
+    // Only update permissions
+    return this.rolesService.update(+id, { permissions });
+  }
+
   @Patch(':id/deactivate')
   @Roles('Super Admin', 'Admin')
   @ApiOperation({ summary: 'Deactivate role', description: 'Deactivates a role by ID.' })

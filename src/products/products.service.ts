@@ -55,6 +55,7 @@ export class ProductsService {
             relations: {
                 images: true,
                 restaurant: true,
+                category: true,
             },
         });
 
