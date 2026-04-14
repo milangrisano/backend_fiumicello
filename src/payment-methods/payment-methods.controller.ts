@@ -5,21 +5,20 @@ import { PaymentMethod } from './entities/payment-method.entity';
 import { CreatePaymentMethodDto } from './dto/create-payment-method.dto';
 import { UpdatePaymentMethodDto } from './dto/update-payment-method.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../roles/roles.guard';
-import { Roles } from '../roles/roles.decorator';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { RequirePermissions } from '../auth/decorators/permissions.decorator';
 
 @ApiTags('Payment Methods')
 @Controller('payment-methods')
-@UseGuards(JwtAuthGuard) // Protect all routes
+@UseGuards(JwtAuthGuard, PermissionsGuard) // Protect all routes
 export class PaymentMethodsController {
     constructor(private readonly paymentMethodsService: PaymentMethodsService) { }
 
     @Post()
     @ApiOperation({ summary: 'Create payment method', description: 'Creates a new payment method. Requires Super Admin or Admin role.' })
     @ApiCreatedResponse({ description: 'The payment method has been successfully created.', type: PaymentMethod })
-    @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin or Admin role.' })
-    @UseGuards(RolesGuard)
-    @Roles('Super Admin', 'Admin')
+    @ApiForbiddenResponse({ description: 'Forbidden. Requires utilities:payment_methods permission.' })
+    @RequirePermissions('utilities:payment_methods')
     create(@Body() createPaymentMethodDto: CreatePaymentMethodDto) {
         return this.paymentMethodsService.create(createPaymentMethodDto);
     }
@@ -43,9 +42,8 @@ export class PaymentMethodsController {
     @ApiOperation({ summary: 'Update payment method', description: 'Updates a payment method by ID. Requires Super Admin or Admin role.' })
     @ApiOkResponse({ description: 'The payment method has been successfully updated.', type: PaymentMethod })
     @ApiNotFoundResponse({ description: 'Payment method not found.' })
-    @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin or Admin role.' })
-    @UseGuards(RolesGuard)
-    @Roles('Super Admin', 'Admin')
+    @ApiForbiddenResponse({ description: 'Forbidden. Requires utilities:payment_methods permission.' })
+    @RequirePermissions('utilities:payment_methods')
     update(@Param('id', ParseIntPipe) id: number, @Body() updatePaymentMethodDto: UpdatePaymentMethodDto) {
         return this.paymentMethodsService.update(id, updatePaymentMethodDto);
     }

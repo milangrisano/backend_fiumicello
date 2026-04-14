@@ -5,12 +5,12 @@ import { Category } from './entities/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../roles/roles.guard';
-import { Roles } from '../roles/roles.decorator';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { RequirePermissions } from '../auth/decorators/permissions.decorator';
 
 @ApiTags('Categories')
 @Controller('categories')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class CategoriesController {
     constructor(private readonly categoriesService: CategoriesService) { }
 
@@ -18,7 +18,7 @@ export class CategoriesController {
     @ApiOperation({ summary: 'Create category', description: 'Creates a new category. Requires Super Admin, Admin or Administrador role.' })
     @ApiCreatedResponse({ description: 'The category has been successfully created.', type: Category })
     @ApiForbiddenResponse({ description: 'Forbidden.' })
-    @Roles('Super Admin', 'Admin', 'Administrador')
+    @RequirePermissions('utilities:categories')
     create(@Body() createCategoryDto: CreateCategoryDto) {
         return this.categoriesService.create(createCategoryDto);
     }
@@ -43,7 +43,7 @@ export class CategoriesController {
     @ApiOkResponse({ description: 'The category has been successfully updated.', type: Category })
     @ApiNotFoundResponse({ description: 'Category not found.' })
     @ApiForbiddenResponse({ description: 'Forbidden.' })
-    @Roles('Super Admin', 'Admin', 'Administrador')
+    @RequirePermissions('utilities:categories')
     update(@Param('id', ParseUUIDPipe) id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
         return this.categoriesService.update(id, updateCategoryDto);
     }
@@ -53,7 +53,7 @@ export class CategoriesController {
     @ApiOkResponse({ description: 'The category status has been successfully updated.' })
     @ApiNotFoundResponse({ description: 'Category not found.' })
     @ApiForbiddenResponse({ description: 'Forbidden.' })
-    @Roles('Super Admin', 'Admin', 'Administrador')
+    @RequirePermissions('utilities:categories')
     deactivate(@Param('id', ParseUUIDPipe) id: string) {
         return this.categoriesService.deactivate(id);
     }

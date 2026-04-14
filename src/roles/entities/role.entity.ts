@@ -24,6 +24,10 @@ export class Role {
     @Column('simple-array', { default: '' })
     permissions: string[];
 
+    @ApiProperty({ description: 'The default route or landing page for the role after login', example: '/sales', required: false })
+    @Column({ nullable: true })
+    defaultRoute: string;
+
     @OneToMany(() => User, (user) => user.role)
     users: User[];
 }

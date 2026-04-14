@@ -5,13 +5,13 @@ import { User } from './entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../roles/roles.guard';
-import { Roles } from '../roles/roles.decorator';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { RequirePermissions } from '../auth/decorators/permissions.decorator';
 
 @ApiTags('Users')
 @Controller('users')
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('Super Admin', 'Admin')
+@UseGuards(JwtAuthGuard, PermissionsGuard)
+@RequirePermissions('utilities:users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) { }
 

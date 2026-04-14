@@ -5,21 +5,20 @@ import { Terminal } from './entities/terminal.entity';
 import { CreateTerminalDto } from './dto/create-terminal.dto';
 import { UpdateTerminalDto } from './dto/update-terminal.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from '../roles/roles.guard';
-import { Roles } from '../roles/roles.decorator';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { RequirePermissions } from '../auth/decorators/permissions.decorator';
 
 @ApiTags('Terminals')
 @Controller('terminals')
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class TerminalsController {
     constructor(private readonly terminalsService: TerminalsService) { }
 
     @Post()
     @ApiOperation({ summary: 'Create terminal', description: 'Creates a new terminal. Requires Super Admin or Admin role.' })
     @ApiCreatedResponse({ description: 'The terminal has been successfully created.', type: Terminal })
-    @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin, Admin or Administrador role.' })
-    @UseGuards(RolesGuard)
-    @Roles('Super Admin', 'Admin', 'Administrador')
+    @ApiForbiddenResponse({ description: 'Forbidden. Requires utilities:terminals permission.' })
+    @RequirePermissions('utilities:terminals')
     create(@Body() createTerminalDto: CreateTerminalDto) {
         return this.terminalsService.create(createTerminalDto);
     }
@@ -43,9 +42,8 @@ export class TerminalsController {
     @ApiOperation({ summary: 'Update terminal', description: 'Updates a terminal by ID. Requires Super Admin or Admin role.' })
     @ApiOkResponse({ description: 'The terminal has been successfully updated.', type: Terminal })
     @ApiNotFoundResponse({ description: 'Terminal not found.' })
-    @ApiForbiddenResponse({ description: 'Forbidden. Requires Super Admin, Admin or Administrador role.' })
-    @UseGuards(RolesGuard)
-    @Roles('Super Admin', 'Admin', 'Administrador')
+    @ApiForbiddenResponse({ description: 'Forbidden. Requires utilities:terminals permission.' })
+    @RequirePermissions('utilities:terminals')
     update(@Param('id', ParseIntPipe) id: number, @Body() updateTerminalDto: UpdateTerminalDto) {
         return this.terminalsService.update(id, updateTerminalDto);
     }

@@ -5,17 +5,17 @@ import { Role } from './entities/role.entity';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { RolesGuard } from './roles.guard';
-import { Roles } from './roles.decorator';
+import { PermissionsGuard } from '../auth/guards/permissions.guard';
+import { RequirePermissions } from '../auth/decorators/permissions.decorator';
 
 @ApiTags('Roles')
 @Controller('roles')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, PermissionsGuard)
 export class RolesController {
   constructor(private readonly rolesService: RolesService) { }
 
   @Post()
-  @Roles('Super Admin')
+  @RequirePermissions('utilities:roles')
   @ApiOperation({ summary: 'Create role', description: 'Creates a new role.' })
   @ApiCreatedResponse({ description: 'The role has been successfully created.', type: Role })
   create(@Body() createRoleDto: CreateRoleDto) {
@@ -23,7 +23,7 @@ export class RolesController {
   }
 
   @Get()
-  @Roles('Super Admin', 'Admin')
+  @RequirePermissions('utilities:roles')
   @ApiOperation({ summary: 'Get all roles', description: 'Retrieves a list of all roles.' })
   @ApiOkResponse({ description: 'List of roles.', type: [Role] })
   findAll(@Request() req: any) {
@@ -31,7 +31,7 @@ export class RolesController {
   }
 
   @Get(':id')
-  @Roles('Super Admin', 'Admin')
+  @RequirePermissions('utilities:roles')
   @ApiOperation({ summary: 'Get role by ID', description: 'Retrieves a single role by ID.' })
   @ApiOkResponse({ description: 'The role found.', type: Role })
   @ApiNotFoundResponse({ description: 'Role not found.' })
@@ -40,7 +40,7 @@ export class RolesController {
   }
 
   @Patch(':id')
-  @Roles('Super Admin')
+  @RequirePermissions('utilities:roles')
   @ApiOperation({ summary: 'Update role', description: 'Updates a role by ID.' })
   @ApiOkResponse({ description: 'The role has been successfully updated.', type: Role })
   @ApiNotFoundResponse({ description: 'Role not found.' })
@@ -49,7 +49,7 @@ export class RolesController {
   }
 
   @Patch(':id/permissions')
-  @Roles('Super Admin', 'Admin')
+  @RequirePermissions('utilities:roles')
   @ApiOperation({ summary: 'Update role permissions', description: 'Updates permissions for a role.' })
   @ApiOkResponse({ description: 'The role permissions have been successfully updated.', type: Role })
   @ApiNotFoundResponse({ description: 'Role not found.' })
@@ -59,7 +59,7 @@ export class RolesController {
   }
 
   @Patch(':id/deactivate')
-  @Roles('Super Admin', 'Admin')
+  @RequirePermissions('utilities:roles')
   @ApiOperation({ summary: 'Deactivate role', description: 'Deactivates a role by ID.' })
   @ApiOkResponse({ description: 'The role has been successfully deactivated.' })
   @ApiNotFoundResponse({ description: 'Role not found.' })
@@ -68,7 +68,7 @@ export class RolesController {
   }
 
   @Patch(':id/activate')
-  @Roles('Super Admin', 'Admin')
+  @RequirePermissions('utilities:roles')
   @ApiOperation({ summary: 'Activate role', description: 'Activates a role by ID.' })
   @ApiOkResponse({ description: 'The role has been successfully activated.' })
   @ApiNotFoundResponse({ description: 'Role not found.' })

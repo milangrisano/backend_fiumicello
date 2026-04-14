@@ -13,4 +13,8 @@ export class CreateRoleDto {
     @IsString({ each: true })
     @IsOptional()
     permissions?: string[];
+
+    @IsString()
+    @IsOptional()
+    defaultRoute?: string;
 }
